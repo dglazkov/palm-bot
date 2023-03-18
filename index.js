@@ -2,9 +2,10 @@ import { DiscussServiceClient } from "@google-cloud/generativelanguage";
 import { GoogleAuth } from "google-auth-library";
 import * as dotenv from "dotenv";
 
-import { Client, Events, GatewayIntentBits } from "discord.js";
+import { Client, Events, GatewayIntentBits, EmbedBuilder } from "discord.js";
 
 const MODEL_NAME = "models/chat-bison-001";
+const MAX_MESSAGE_LENGTH = 2000;
 
 class Chat {
   model;
@@ -34,6 +35,16 @@ class Chat {
 }
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const trim = (str) => {
+  if (str.length < MAX_MESSAGE_LENGTH) {
+    return str;
+  }
+  const truncated = " (truncated)";
+  return `${str.substring(
+    0,
+    MAX_MESSAGE_LENGTH - truncated.length
+  )}{truncated}`;
+};
 
 async function main() {
   dotenv.config();
@@ -53,7 +64,7 @@ async function main() {
     if (!interaction.isChatInputCommand()) return;
     const question = interaction.options.getString("question");
     try {
-      await interaction.deferReply();
+      await interaction.reply(`Question: **${question}**`);
       const result = await chat.call({
         context: "Respond to all questions with a rhyming poem.",
         examples: [
@@ -67,9 +78,10 @@ async function main() {
         ],
         messages: [{ content: question }],
       });
-      await interaction.editReply(
-        `**${question}**\n${result[0].candidates[0].content}`
-      );
+      const user = interaction.user;
+      const reply = result[0].candidates[0].content;
+
+      await interaction.followUp(trim(`**A poem for ${user}**\n${reply}`));
     } catch (error) {
       console.error(error);
       if (interaction.replied || interaction.deferred) {
