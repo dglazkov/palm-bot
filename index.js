@@ -65,6 +65,7 @@ async function main() {
     const question = interaction.options.getString("question");
     try {
       await interaction.reply(`Question: **${question}**`);
+      await interaction.channel.sendTyping();
       const result = await chat.call({
         context: "Respond to all questions with a rhyming poem.",
         examples: [
