@@ -1,38 +1,10 @@
-import { DiscussServiceClient } from "@google-cloud/generativelanguage";
-import { GoogleAuth } from "google-auth-library";
+import { Chat } from "./palm.js";
 import * as dotenv from "dotenv";
 
 import { Client, Events, GatewayIntentBits, EmbedBuilder } from "discord.js";
 
 const MODEL_NAME = "models/chat-bison-001";
 const MAX_MESSAGE_LENGTH = 2000;
-
-class Chat {
-  model;
-  api_key;
-  temperature;
-  candidateCount;
-
-  constructor({ model, api_key, temperature = 0.5, candidateCount = 1 }) {
-    this.model = model;
-    this.api_key = api_key;
-    this.temperature = temperature;
-    this.candidateCount = candidateCount;
-  }
-
-  async call(prompt) {
-    const client = new DiscussServiceClient({
-      authClient: new GoogleAuth().fromAPIKey(this.api_key),
-    });
-
-    return client.generateMessage({
-      model: this.model,
-      temperature: this.temperature,
-      candidateCount: this.candidateCount,
-      prompt,
-    });
-  }
-}
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const trim = (str) => {
