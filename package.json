@@ -9,7 +9,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@google-cloud/generativelanguage": "file:nodejs-generative-language.tar.gz",
     "discord.js": "^14.8.0",
