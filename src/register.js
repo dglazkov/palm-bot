@@ -1,7 +1,7 @@
 import { REST, Routes, SlashCommandBuilder } from "discord.js";
-import * as dotenv from "dotenv";
+import { config } from "dotenv";
 
-dotenv.config();
+config();
 
 const appId = process.env.APPLICATION_ID;
 const token = process.env.DISCORD_TOKEN;

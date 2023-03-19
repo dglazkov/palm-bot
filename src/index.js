@@ -1,13 +1,13 @@
 import { Chat } from "./palm.js";
 import { questionAnswerCommand } from "./commands.js";
-import * as dotenv from "dotenv";
+import { config } from "dotenv";
 
-import { Client, Events, GatewayIntentBits, EmbedBuilder } from "discord.js";
+import { Client, Events, GatewayIntentBits } from "discord.js";
 
 const MODEL_NAME = "models/chat-bison-001";
 
 async function main() {
-  dotenv.config();
+  config();
 
   const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
