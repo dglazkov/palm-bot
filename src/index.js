@@ -18,6 +18,32 @@ const trim = (str) => {
   )}{truncated}`;
 };
 
+const questionAnswerCommand = (handler) => {
+  return async (interaction) => {
+    if (!interaction.isChatInputCommand()) return;
+    const question = interaction.options.getString("question");
+    try {
+      await interaction.reply(`Question: **${question}**`);
+      await interaction.channel.sendTyping();
+      const user = interaction.user;
+      const reply = await handler({ question, user });
+      await interaction.followUp(reply);
+    } catch (error) {
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({
+          content: "There was an error while executing this command.",
+          ephemeral: true,
+        });
+      } else {
+        await interaction.reply({
+          content: "There was an error while executing this command.",
+          ephemeral: true,
+        });
+      }
+    }
+  };
+};
+
 async function main() {
   dotenv.config();
 
@@ -32,12 +58,9 @@ async function main() {
     console.log("Ready!");
   });
 
-  client.on(Events.InteractionCreate, async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
-    const question = interaction.options.getString("question");
-    try {
-      await interaction.reply(`Question: **${question}**`);
-      await interaction.channel.sendTyping();
+  client.on(
+    Events.InteractionCreate,
+    questionAnswerCommand(async ({ question, user }) => {
       const result = await chat.call({
         context: "Respond to all questions with a rhyming poem.",
         examples: [
@@ -45,31 +68,17 @@ async function main() {
             input: { content: "What is the capital of California?" },
             output: {
               content: `If the capital of California is what you seek,
-    Sacramento is where you ought to peek.`,
+  Sacramento is where you ought to peek.`,
             },
           },
         ],
         messages: [{ content: question }],
       });
-      const user = interaction.user;
       const reply = result[0].candidates[0].content;
 
-      await interaction.followUp(trim(`**A poem for ${user}**\n${reply}`));
-    } catch (error) {
-      console.error(error);
-      if (interaction.replied || interaction.deferred) {
-        await interaction.followUp({
-          content: "There was an error while executing this command.",
-          ephemeral: true,
-        });
-      } else {
-        await interaction.reply({
-          content: "There was an error while executing this command.",
-          ephemeral: true,
-        });
-      }
-    }
-  });
+      return `**A poem for ${user}**\n${reply}`;
+    })
+  );
 
   client.login(process.env.DISCORD_TOKEN);
 }
