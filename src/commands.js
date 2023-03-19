@@ -24,7 +24,7 @@ export const questionAnswerCommand = (handler) => {
       await interaction.followUp(trim(reply));
     } catch (error) {
       await interaction.followUp({
-        content: "There was an error while executing this command.",
+        content: `An error has occurred:\n\`\`\`${error.message}\`\`\``,
         ephemeral: true,
       });
     }

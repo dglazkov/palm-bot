@@ -39,8 +39,14 @@ test("questionAnswerCommand handles errors", async (t) => {
     },
     user: "user",
     replied: true,
+    reply: async (message) => {
+      t.is(message, "Question: **question**");
+    },
+    channel: {
+      sendTyping: async () => {},
+    },
     followUp: async ({ content, ephemeral }) => {
-      t.is(content, "There was an error while executing this command.");
+      t.is(content, "An error has occurred:\n```error```");
       t.true(ephemeral);
     },
   };
