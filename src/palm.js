@@ -1,6 +1,7 @@
 import { DiscussServiceClient } from "@google-cloud/generativelanguage";
 import { GoogleAuth } from "google-auth-library";
 
+// A simple wrapper around the PaLM `DiscussServiceClient`.
 export class Chat {
   model;
   api_key;

@@ -6,6 +6,10 @@ config();
 const appId = process.env.APPLICATION_ID;
 const token = process.env.DISCORD_TOKEN;
 
+// The logic below is adapted from the Discord.js documentation:
+// https://discordjs.guide/creating-your-bot/command-deployment.html#guild-commands
+
+// Construct the `/poet` command.
 const command = new SlashCommandBuilder()
   .setName("poet")
   .setDescription("Responds to all questions with a rhyming poem")
