@@ -53,3 +53,29 @@ test("questionAnswerCommand handles errors", async (t) => {
 
   await handler(interaction);
 });
+
+test("questionAnswerCommand handles long messages", async (t) => {
+  const handler = questionAnswerCommand(async ({ question, user }) => {
+    return "a".repeat(2001);
+  });
+
+  const interaction = {
+    isChatInputCommand: () => true,
+    options: {
+      getString: () => "question",
+    },
+    user: "user",
+    reply: async (message) => {
+      t.is(message, "Question: **question**");
+    },
+    channel: {
+      sendTyping: async () => {},
+    },
+    followUp: async (message) => {
+      t.is(message.length, 2000);
+      t.true(message.endsWith(" *(truncated)*"));
+    },
+  };
+
+  await handler(interaction);
+});

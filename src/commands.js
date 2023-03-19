@@ -5,11 +5,11 @@ const trim = (str) => {
   if (str.length < MAX_MESSAGE_LENGTH) {
     return str;
   }
-  const truncated = " (truncated)";
+  const truncated = " *(truncated)*";
   return `${str.substring(
     0,
     MAX_MESSAGE_LENGTH - truncated.length
-  )}{truncated}`;
+  )}${truncated}`;
 };
 
 export const questionAnswerCommand = (handler) => {
