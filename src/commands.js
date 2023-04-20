@@ -21,9 +21,14 @@ const trim = (str) => {
 //   handler: A function that takes an object with the following two properties:
 //   - question -- The question that the user asked (string).
 //   - user -- The Discord.js object representing user who asked the question.
-export const questionAnswerCommand = (handler) => {
+
+export const questionAnswerCommand = (handler, commandName) => {
   return async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
+    if (
+      !interaction.isChatInputCommand() ||
+      interaction.commandName !== commandName
+    )
+      return;
     const question = interaction.options.getString("question");
     try {
       await interaction.reply(`Question: **${question}**`);
@@ -31,6 +36,42 @@ export const questionAnswerCommand = (handler) => {
       const user = interaction.user;
       const reply = await handler({ question, user });
       await interaction.followUp(trim(reply));
+    } catch (error) {
+      await interaction.followUp({
+        content: `An error has occurred:\n\`\`\`${error.message}\`\`\``,
+        ephemeral: true,
+      });
+    }
+  };
+};
+
+export const questionAnswerInThreadCommand = (handler, commandName) => {
+  return async (interaction) => {
+    if (
+      !interaction.isChatInputCommand() ||
+      interaction.commandName !== commandName
+    )
+      return;
+    const prompt = interaction.options.getString("prompt");
+    try {
+      await interaction.reply(`Prompt: **${prompt}**`);
+
+      // Create a new thread in the channel where the command was used
+      const thread = await interaction.channel.threads.create({
+        name: `Thread for ${commandName} command`,
+        autoArchiveDuration: 1440, // 24 hours
+      });
+
+      // Get the latest 5 messages in the thread
+      const messages = await thread.messages.fetch({ limit: 5 });
+      const mappedMessages = messages.map((message) => ({ content: message }));
+      console.log({ mappedMessages });
+      // Pass the messages and other relevant information to the handler function
+      const context = { prompt, messages: mappedMessages };
+      const reply = await handler(context);
+
+      // Post the reply in the thread
+      await thread.send(trim(reply));
     } catch (error) {
       await interaction.followUp({
         content: `An error has occurred:\n\`\`\`${error.message}\`\`\``,

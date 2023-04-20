@@ -10,7 +10,7 @@ const token = process.env.DISCORD_TOKEN;
 // https://discordjs.guide/creating-your-bot/command-deployment.html#guild-commands
 
 // Construct the `/poet` command.
-const command = new SlashCommandBuilder()
+const poet = new SlashCommandBuilder()
   .setName("poet")
   .setDescription("Responds to all questions with a rhyming poem")
   .addStringOption((option) =>
@@ -20,7 +20,57 @@ const command = new SlashCommandBuilder()
       .setRequired(true)
   );
 
-const commands = [command.toJSON()];
+// Construct the `/joke` command.
+const joke = new SlashCommandBuilder()
+  .setName("joke")
+  .setDescription("Responds to all questions with a joke")
+  .addStringOption((option) =>
+    option
+      .setName("question")
+      .setDescription("The question to answer")
+      .setRequired(true)
+  );
+
+// Construct the `/child` command.
+const child = new SlashCommandBuilder()
+  .setName("child")
+  .setDescription("Responds to all questions like a 5-year old child")
+  .addStringOption((option) =>
+    option
+      .setName("question")
+      .setDescription("The question to answer")
+      .setRequired(true)
+  );
+
+// Construct the `/code` command.
+const code = new SlashCommandBuilder()
+  .setName("code")
+  .setDescription("Responds to all questions with a code snippet")
+  .addStringOption((option) =>
+    option
+      .setName("question")
+      .setDescription("The question to answer with code")
+      .setRequired(true)
+  );
+
+// Construct the `/chat` command.
+const chat = new SlashCommandBuilder()
+  .setName("chat")
+  .setDescription("Chat with Palmer, the AI chatbot.")
+  .addStringOption((option) =>
+    option
+      .setName("prompt")
+      .setDescription("The prompt for the chatbot")
+      .setRequired(true)
+  );
+
+const commands = [
+  poet.toJSON(),
+  code.toJSON(),
+  joke.toJSON(),
+  child.toJSON(),
+  chat.toJSON(),
+];
 
 // Construct and prepare an instance of the REST module
 const rest = new REST({ version: "10" }).setToken(token);
