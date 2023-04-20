@@ -1,3 +1,5 @@
 node_modules
 lib
 .env
+
+src/palm_proxy.js
