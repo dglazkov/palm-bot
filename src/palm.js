@@ -1,4 +1,4 @@
-import { DiscussServiceClient } from "@google-cloud/generativelanguage";
+import { DiscussServiceClient } from "@google-ai/generativelanguage";
 import { GoogleAuth } from "google-auth-library";
 
 // A simple wrapper around the PaLM `DiscussServiceClient`.
